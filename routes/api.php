@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Gestor\CategoryController;
 use App\Http\Controllers\Api\Gestor\CompanyController;
+use App\Http\Controllers\Api\Gestor\ConfigurationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/login', [CompanyController::class, 'login']);
 Route::post('/register', [CompanyController::class, 'store']);
+
+
+Route::middleware('verifyTokenJWT')->group(function () {
+
+Route::post('/category/verify_order', [CategoryController::class, 'verifyOrder']);
+
+Route::apiResources([
+    // 'configuration' => ConfigurationController::class,
+    'category' => CategoryController::class,
+]);
+
+});
