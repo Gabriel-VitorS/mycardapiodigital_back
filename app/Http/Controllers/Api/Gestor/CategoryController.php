@@ -51,7 +51,7 @@ class CategoryController extends Controller
                 ->first();
         
         if($category == null){
-            return response()->json(['message' => 'Configuration not find'], 404);
+            return response()->json(['message' => 'Category not find'], 404);
         }
 
         return response()->json($category);
@@ -65,7 +65,7 @@ class CategoryController extends Controller
                 ->delete();
         
         if($category == null){
-            return response()->json(['message' => 'Configuration not find'], 404);
+            return response()->json(['message' => 'Category not find'], 404);
         }
 
         return response()->json(['message' => 'Category deleted successfully' , 'data' => $id]);
@@ -148,10 +148,10 @@ class CategoryController extends Controller
                 ]);
 
         if(!$category){
-            return response()->json(['messsage' => 'Configuration not find'], 404);
+            return response()->json(['messsage' => 'Category not find'], 404);
         }
 
-        return response()->json(['messsage' => 'Configuration successfully updated', 'data' => $id], 200);
+        return response()->json(['messsage' => 'Category successfully updated', 'data' => $id], 200);
 
     }
 
