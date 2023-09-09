@@ -21,14 +21,12 @@ class verifyTokenJWT
 
         try {
             
-            $jwt = explode('bearer ',$request->header('authorization'));
-            
-            if(count($jwt) != 2){
+            if($request->bearerToken() == '' || $request->bearerToken() == null){
                 return response()->json(['Unauthorized access'=> 'E_UNAUTHORIZED_ACCESS'], 401);
             }
             
             $key = env('JWT_KEY');
-            $decoded = JWT::decode($jwt[1], new Key($key, 'HS256'));
+            $decoded = JWT::decode($request->bearerToken(), new Key($key, 'HS256'));
 
             Session::put('id', $decoded->id);
 
