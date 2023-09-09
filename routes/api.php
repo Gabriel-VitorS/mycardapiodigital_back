@@ -17,21 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/login', [CompanyController::class, 'login']);
 Route::post('/register', [CompanyController::class, 'store']);
 
 
 Route::middleware('verifyTokenJWT')->group(function () {
-
-Route::post('/category/verify_order', [CategoryController::class, 'verifyOrder']);
-
-Route::apiResources([
-    // 'configuration' => ConfigurationController::class,
-    'category' => CategoryController::class,
-]);
+    
+    Route::post('/category/verify_order', [CategoryController::class, 'verifyOrder']);
+    Route::apiResource('/configuration', ConfigurationController::class)->only(['index', 'store', 'update']);
+    Route::post('/configuration/verify_url', [ConfigurationController::class, 'verifyIfUrlExist']);
+    Route::apiResources([
+        'category' => CategoryController::class,
+    ]);
 
 });
