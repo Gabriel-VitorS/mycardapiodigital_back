@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->double('value', 8,2);
-            $table->text('resume');
-            $table->text('details');
-            $table->string('image');
+            $table->text('resume')->nullable();
+            $table->text('details')->nullable();
+            $table->string('image')->nullable();
             $table->boolean('highlight');
             $table->boolean('visible_online');
             $table->timestamps();
