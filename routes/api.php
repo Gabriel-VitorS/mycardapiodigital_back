@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Gestor\CategoryController;
 use App\Http\Controllers\Api\Gestor\CompanyController;
 use App\Http\Controllers\Api\Gestor\ConfigurationController;
+use App\Http\Controllers\Api\Gestor\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,7 @@ Route::middleware('verifyTokenJWT')->group(function () {
     Route::post('/configuration/verify_url', [ConfigurationController::class, 'verifyIfUrlExist']);
     Route::apiResources([
         'category' => CategoryController::class,
+        'product' => ProductController::class
     ]);
 
 });
