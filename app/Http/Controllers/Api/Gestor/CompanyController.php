@@ -27,6 +27,20 @@ class CompanyController extends Controller
 
     }
 
+    public function show(){
+        $company = DB::table('companies')
+                ->where('id', session()->get('id'))
+                ->first();
+        
+        if($company == null){
+            return response()->json(['message' => 'Company not find'], 402);    
+        }
+
+        unset($company->password);
+
+        return response()->json($company);
+    }
+
     public function store(Request $request): JsonResponse{
         
         $validator = Validator::make($request->all(), [
@@ -37,7 +51,7 @@ class CompanyController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 500);    
+            return response()->json($validator->errors(), 400);    
         }
 
         $findEmail = DB::table('companies')->where('email', '=', $request->email)->first();
@@ -65,7 +79,7 @@ class CompanyController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 500);    
+            return response()->json($validator->errors(), 400);    
         }
 
         $company = DB::table('companies')->where('email', '=', $request->email)->first();

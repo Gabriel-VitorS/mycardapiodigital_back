@@ -24,6 +24,8 @@ Route::post('/verify_email', [CompanyController::class, 'verifyIfEmailExist']);
 
 
 Route::middleware('verifyTokenJWT')->group(function () {
+
+    Route::get('/company', [CompanyController::class, 'show']);
     
     Route::post('/category/verify_order', [CategoryController::class, 'verifyOrder']);
     Route::apiResource('/configuration', ConfigurationController::class)->only(['index', 'store', 'update']);
