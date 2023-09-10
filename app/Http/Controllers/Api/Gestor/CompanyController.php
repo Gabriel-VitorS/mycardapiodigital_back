@@ -13,6 +13,20 @@ use Firebase\JWT\JWT;
 
 class CompanyController extends Controller
 {
+
+    public function verifyIfEmailExist(Request $request): JsonResponse{
+        $emailExist = DB::table('companies')
+            ->where('email', $request->email)
+            ->first();
+
+        if($emailExist){
+            return response()->json(['isValid' => false], 200);
+        }else{
+            return response()->json(['isValid' => true], 200);
+        }
+
+    }
+
     public function store(Request $request): JsonResponse{
         
         $validator = Validator::make($request->all(), [

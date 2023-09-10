@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [CompanyController::class, 'login']);
 Route::post('/register', [CompanyController::class, 'store']);
+Route::post('/verify_email', [CompanyController::class, 'verifyIfEmailExist']);
 
 
 Route::middleware('verifyTokenJWT')->group(function () {
