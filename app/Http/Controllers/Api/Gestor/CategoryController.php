@@ -85,7 +85,7 @@ class CategoryController extends Controller
                     $query->where('id', $queryId);
                 })
                 ->latest()
-                ->paginate(15);
+                ->paginate($request->limit ?? 15);
 
         return response()->json($categories);
     }
