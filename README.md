@@ -11,3 +11,6 @@
 ## API
 
 API feita com Laravel
+
+OBS: No env coloque a variável JWT_KEY com o valor qualquer para utilizar a autenticação JWT
+Ex: JWT_KEY="teste"
