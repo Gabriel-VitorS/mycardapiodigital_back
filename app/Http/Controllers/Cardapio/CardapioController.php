@@ -21,7 +21,6 @@ class CardapioController extends Controller
         $companyId = $configuration->company_id;
 
         $urlLogo = $this->getUrlLogoImage($configuration->logo_image);
-        $urlBanner = $this->getUrlBannerImage($configuration->banner_image);
 
         /**
          * Pega os produtos em destaque
@@ -91,7 +90,6 @@ class CardapioController extends Controller
         return response()->json([
             'configuration' => [
                 'name_company' => $configuration->name_company,
-                'banner_image' => $urlBanner,
                 'url_logo' => $urlLogo
             ],
             'highlight' => $productsHighlight, 
