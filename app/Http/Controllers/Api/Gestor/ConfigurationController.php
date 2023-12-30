@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 
 class ConfigurationController extends Controller
@@ -50,13 +51,16 @@ class ConfigurationController extends Controller
         $validator = Validator::make($request->all(),[
             'name_company' => 'required',
             'url' => 'required|regex:/^[A-Za-z0-9-]+$/',
-            'banner_image' => ['nullable', File::image()->max(5 * 1024)],
+            'background_color' => ['required', Rule::in(['#ffffff', '#18181b'])],
+            'theme_color' => 'hex_color',
             'logo_image' => ['nullable', File::image()->max(5 * 1024)]
         ]);
+
 
         if($validator->fails()){
             return response()->json($validator->errors(), 400);    
         }
+
 
         //Verifca se já tem cadastro
         $configurationIsSaved = DB::table('configurations')
@@ -76,19 +80,11 @@ class ConfigurationController extends Controller
         $configuration->company_id = session()->get('id');
         $configuration->name_company = $request->name_company;
         $configuration->url = $request->url;
+        $configuration->background_color = $request->background_color;
+        $configuration->theme_color = $request->theme_color;
 
         $configuration->save();
 
-        if($request->hasFile('banner_image')){
-
-            $bannerImageName = session()->get('id') . '.png';
-            $request->file('banner_image')->storeAs('public/banner_image', $bannerImageName);
-            
-            $configuration->banner_image = $bannerImageName;
-
-            $configuration->save();
-        }
-        
         if($request->hasFile('logo_image')){
 
             $logoImageName = session()->get('id') . '.png';
@@ -113,7 +109,8 @@ class ConfigurationController extends Controller
                 'company_id' => session()->get('id'),
                 'name_company' => '',
                 'url' => '',
-                'banner_image' => '',
+                'theme_color' => '',
+                'background_color' => '',
                 'logo_image' => '',
                 'created_at' => '',
                 'updated_at' => '',
@@ -123,17 +120,17 @@ class ConfigurationController extends Controller
         }
 
         $configuration->url_logo = $this->getUrlLogoImage($configuration->logo_image);
-        $configuration->url_banner = $this->getUrlBannerImage($configuration->banner_image);
 
         return response()->json($configuration, 200, [],JSON_UNESCAPED_SLASHES);
     }
 
     public function update($id,Request $request){
-        // return response()->json($request->all(), 406);
+        
         $validator = Validator::make($request->all(),[
             'name_company' => 'required',
             'url' => 'required|regex:/^[A-Za-z0-9-]+$/',
-            'banner_image' => ['nullable', File::image()->max(5 * 1024)],
+            'background_color' => ['required', Rule::in(['#ffffff', '#18181b'])],
+            'theme_color' => 'hex_color',
             'logo_image' => ['nullable', File::image()->max(5 * 1024)]
         ]);
 
@@ -151,17 +148,10 @@ class ConfigurationController extends Controller
         $configuration->update([
             'name_company' => $request->name_company,
             'url' => $request->url,
+            'theme_color' => $request->theme_color,
+            'background_color' => $request->background_color,
         ]);
 
-        if($request->hasFile('banner_image')){
-
-            $bannerImageName = session()->get('id') . '.png';
-            $request->file('banner_image')->storeAs('public/banner_image', $bannerImageName);
-            
-            $configuration->update(['banner_image' => $bannerImageName]);
-        }
-
-        // dd($request->hasFile('logo_image'));
 
         if($request->hasFile('logo_image')){
             
