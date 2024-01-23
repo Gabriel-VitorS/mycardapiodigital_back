@@ -90,7 +90,9 @@ class CardapioController extends Controller
         return response()->json([
             'configuration' => [
                 'name_company' => $configuration->name_company,
-                'url_logo' => $urlLogo
+                'url_logo' => $urlLogo,
+                'background_color' => $configuration->background_color,
+                'theme_color' => $configuration->theme_color,
             ],
             'highlight' => $productsHighlight, 
             'company' => $companyId,
@@ -108,7 +110,13 @@ class CardapioController extends Controller
             return response()->json(['message' => 'Product not find'], 404);
         }
 
+        $configuration = DB::table('configurations')
+        ->where('company_id', $product->company_id)
+        ->first();
+
         $product->url_image = $this->getUrlProductImage($product->image);
+        $product->background_color = $configuration->background_color;
+        $product->theme_color = $configuration->theme_color;
 
         unset($product->updated_at);
         unset($product->created_at);
