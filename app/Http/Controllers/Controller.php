@@ -14,10 +14,6 @@ class Controller extends BaseController
         return $image != null ? url('/') . '/storage/logo_image/' . $image : url('/') . '/storage/logo_image/padrao.png';
     }
 
-    public function getUrlBannerImage( string | null $image){
-        return $image != null ? url('/') . '/storage/banner_image/' . $image : url('/') . '/storage/banner_image/padrao.png';
-    }
-
     public function getUrlProductImage( string | null $image){
         return $image != null ? url('/') . '/storage/products/' . $image : url('/') . '/storage/products/padrao.png';
     }

@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->string('name_company');
             $table->string('url')->unique();
-            $table->string('banner_image')->nullable();
             $table->string('logo_image')->nullable();
+            $table->string('background_color', 7);
+            $table->string('theme_color', 7);
             $table->timestamps();
         });
     }
