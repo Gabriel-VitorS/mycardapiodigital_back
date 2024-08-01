@@ -22,7 +22,7 @@ class verifyTokenJWT
         try {
             
             if($request->bearerToken() == '' || $request->bearerToken() == null){
-                return response()->json(['Unauthorized access'=> 'E_UNAUTHORIZED_ACCESS'], 401);
+                return response()->json("Usuário não autenticado", 401);
             }
             
             $key = env('JWT_KEY');
@@ -33,7 +33,7 @@ class verifyTokenJWT
             return $next($request);
 
         } catch (\Throwable $th) {
-            return response()->json(['Unauthorized access'=> 'E_UNAUTHORIZED_ACCESS'], 401);
+            return response()->json("Usuário não autenticado", 401);
         }
     }
 }
