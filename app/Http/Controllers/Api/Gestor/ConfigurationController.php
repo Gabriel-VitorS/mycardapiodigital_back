@@ -46,6 +46,28 @@ class ConfigurationController extends Controller
         
     }
 
+    public function storeImage(Request $request): JsonResponse{
+
+        $validator = Validator::make($request->all(),[
+            'logo_image' => [File::image()->max(5 * 1024)]
+        ]);
+
+        if($validator->fails())
+            return response()->json($validator->errors()->first(), 400);    
+
+
+        $configuration = DB::table('configurations')
+        ->where('company_id', session()->get('id') );        
+
+        $logoImageName = session()->get('id') . '.png';
+        $request->file('logo_image')->storeAs('public/logo_image', $logoImageName);
+
+        $configuration->update(['logo_image' => $logoImageName]);
+        
+        return response()->json(200);
+
+    }
+
     public function store(Request $request): JsonResponse{
 
         $validator = Validator::make($request->all(),[
@@ -84,16 +106,6 @@ class ConfigurationController extends Controller
         $configuration->theme_color = $request->theme_color;
 
         $configuration->save();
-
-        if($request->hasFile('logo_image')){
-
-            $logoImageName = session()->get('id') . '.png';
-            $request->file('logo_image')->storeAs('public/logo_image', $logoImageName);
-            
-            $configuration->logo_image = $logoImageName;
-
-            $configuration->save();
-        }
         
         return response()->json([$configuration->id], 200);
     }
@@ -151,15 +163,6 @@ class ConfigurationController extends Controller
             'theme_color' => $request->theme_color,
             'background_color' => $request->background_color,
         ]);
-
-
-        if($request->hasFile('logo_image')){
-            
-            $logoImageName = session()->get('id') . '.png';
-            $request->file('logo_image')->storeAs('public/logo_image', $logoImageName);
-
-            $configuration->update(['logo_image' => $logoImageName]);
-        }
 
         return response()->json(['message' => 'Configuration successfully updated', 'data' => $configuration->first()->id], 200);
     }

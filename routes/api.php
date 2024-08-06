@@ -32,6 +32,7 @@ Route::middleware('verifyTokenJWT')->group(function () {
     
     Route::post('/category/verify_order', [CategoryController::class, 'verifyOrder']);
     Route::apiResource('/configuration', ConfigurationController::class)->only(['index', 'store', 'update']);
+    Route::post('/configuration/logo_image', [ConfigurationController::class,'storeImage']);
     Route::post('/configuration/verify_url', [ConfigurationController::class, 'verifyIfUrlExist']);
     Route::apiResources([
         'category' => CategoryController::class,
