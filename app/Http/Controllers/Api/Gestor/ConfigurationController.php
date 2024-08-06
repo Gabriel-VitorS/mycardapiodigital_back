@@ -143,7 +143,6 @@ class ConfigurationController extends Controller
             'url' => 'required|regex:/^[A-Za-z0-9-]+$/',
             'background_color' => ['required', Rule::in(['#ffffff', '#18181b'])],
             'theme_color' => 'hex_color',
-            'logo_image' => ['nullable', File::image()->max(5 * 1024)]
         ]);
 
         if($validator->fails()){
