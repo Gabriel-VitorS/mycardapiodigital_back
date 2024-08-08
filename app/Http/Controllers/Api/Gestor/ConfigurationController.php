@@ -46,25 +46,28 @@ class ConfigurationController extends Controller
         
     }
 
-    public function storeImage(Request $request): JsonResponse{
+    public function storeImage(Request $request){
 
         $validator = Validator::make($request->all(),[
-            'logo_image' => [File::image()->max(5 * 1024)]
+            'logo_image' => ['nullable',File::image()->max(5 * 1024)]
         ]);
 
         if($validator->fails())
             return response()->json($validator->errors()->first(), 400);    
 
+        if($request->hasFile('logo_image')){
+            $configuration = DB::table('configurations')
+                ->where('company_id', session()->get('id') );        
+    
+            $logoImageName = session()->get('id') . '.png';
+            $request->file('logo_image')->storeAs('public/logo_image', $logoImageName);
+    
+            $configuration->update(['logo_image' => $logoImageName]);
 
-        $configuration = DB::table('configurations')
-        ->where('company_id', session()->get('id') );        
-
-        $logoImageName = session()->get('id') . '.png';
-        $request->file('logo_image')->storeAs('public/logo_image', $logoImageName);
-
-        $configuration->update(['logo_image' => $logoImageName]);
+            return response()->json('',201);
+        }
         
-        return response()->json(200);
+        return response()->json('',200);
 
     }
 
@@ -75,12 +78,11 @@ class ConfigurationController extends Controller
             'url' => 'required|regex:/^[A-Za-z0-9-]+$/',
             'background_color' => ['required', Rule::in(['#ffffff', '#18181b'])],
             'theme_color' => 'hex_color',
-            'logo_image' => ['nullable', File::image()->max(5 * 1024)]
         ]);
 
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 400);    
+            return response()->json($validator->errors()->first(), 400);    
         }
 
 
@@ -94,7 +96,7 @@ class ConfigurationController extends Controller
         }
 
         if($this->urlIsSaved($request->url)){
-            return response()->json(['message' => 'url field already exists'], 406);
+            return response()->json("URL já existe. Utilize outra", 406);
         }
 
         $configuration = new Configuration();
@@ -115,20 +117,9 @@ class ConfigurationController extends Controller
                 ->where('company_id', session()->get('id'))
                 ->first();
 
-        if($configuration == ''){
-            $configurationEmpty = [
-                'id' => 0,
-                'company_id' => session()->get('id'),
-                'name_company' => '',
-                'url' => '',
-                'theme_color' => '',
-                'background_color' => '',
-                'logo_image' => '',
-                'created_at' => '',
-                'updated_at' => '',
-            ];
-            
-            return response()->json($configurationEmpty);
+
+        if(!$configuration){
+            return response()->json('Configuração não encontrada', 404);
         }
 
         $configuration->url_logo = $this->getUrlLogoImage($configuration->logo_image);
@@ -146,12 +137,12 @@ class ConfigurationController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 400);    
+            return response()->json($validator->errors()->first(), 400);    
         }
 
         //Verifica se url já foi cadastrada
         if($this->urlIsSaved($request->url))
-            return response()->json(['message' => 'url field already exists'], 406);
+            return response()->json("URL já existe. Utilize outra", 406);
 
         $configuration = DB::table('configurations')
                 ->where('company_id', session()->get('id') );
@@ -163,7 +154,7 @@ class ConfigurationController extends Controller
             'background_color' => $request->background_color,
         ]);
 
-        return response()->json(['message' => 'Configuration successfully updated', 'data' => $configuration->first()->id], 200);
+        return response()->json($configuration->first()->id, 200);
     }
 
 }
