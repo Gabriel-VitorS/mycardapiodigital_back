@@ -20,7 +20,7 @@ class CategoryController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 500);    
+            return response()->json($validator->errors()->first(), 400);    
         }
 
         $findOrder = DB::table('categories')
@@ -29,7 +29,7 @@ class CategoryController extends Controller
                 ->first();
 
         if($findOrder)
-            return response()->json(['message' => 'order field already exists'], 406);
+            return response()->json("Número de ordem já foi cadastrada", 400);
 
         $category = new Category();
         
@@ -39,7 +39,7 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return response()->json($category->id, 200) ;
+        return response()->json($category->id, 201) ;
         
     }
 
@@ -51,7 +51,7 @@ class CategoryController extends Controller
                 ->first();
         
         if($category == null){
-            return response()->json(['message' => 'Category not find'], 404);
+            return response()->json("Categoria não encontrada", 404);
         }
 
         return response()->json($category);
@@ -65,10 +65,10 @@ class CategoryController extends Controller
                 ->delete();
         
         if($category == null){
-            return response()->json(['message' => 'Category not find'], 404);
+            return response()->json("Categoria não encontrada", 404);
         }
 
-        return response()->json(['message' => 'Category deleted successfully' , 'data' => $id]);
+        return response()->json("", 204);
     }
 
     public function index(Request $request): JsonResponse{
@@ -98,7 +98,7 @@ class CategoryController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 500);    
+            return response()->json($validator->errors(), 400);    
         }
 
         $findOrder = DB::table('categories')
@@ -125,7 +125,7 @@ class CategoryController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors(), 500);    
+            return response()->json($validator->errors()->first(), 400);    
         }
 
         //Verifica ordem se já existe
@@ -136,7 +136,7 @@ class CategoryController extends Controller
 
         if($findOrder){
             if($findOrder->id != $id)
-                return response()->json(['messsage' => 'order field already exists'], 406);
+                return response()->json("Número de ordem já foi cadastrada", 400);
         }
 
         $category = DB::table('categories')
@@ -148,10 +148,10 @@ class CategoryController extends Controller
                 ]);
 
         if(!$category){
-            return response()->json(['messsage' => 'Category not find'], 404);
+            return response()->json("Categoria não encontrada", 404);
         }
 
-        return response()->json(['messsage' => 'Category successfully updated', 'data' => $id], 200);
+        return response()->json("Categoria atualizada", 200);
 
     }
 
