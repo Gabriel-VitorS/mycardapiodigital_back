@@ -24,7 +24,7 @@ class ProductController extends Controller
                 'resume' => 'nullable',
                 'details' => 'nullable',
                 'highlight' => 'required|boolean',
-                'image' => ['nullable', File::image()->max(5 * 1024)],
+                // 'image' => ['nullable', File::image()->max(5 * 1024)],
                 'visible_online' => 'required|boolean',
             ];
     }
@@ -57,17 +57,7 @@ class ProductController extends Controller
 
         $product->save();
 
-        if($request->hasFile('image')){
-
-            $produtoImageName = $product->id . '.png';
-
-            $request->file('image')->storeAs('public/products/', $produtoImageName);
-
-            $product->image = $produtoImageName;
-
-            $product->save();
-        }
-        return response()->json(['data' => $product->id], 200);
+        return response()->json($product->id, 200);
     }
 
     public function index(Request $request): JsonResponse{
@@ -173,17 +163,42 @@ class ProductController extends Controller
                 'visible_online' => $request->visible_online,
             ]);
 
+        return response()->json('Produto atualizado', 200);
+    }
+
+    function storeImage(Request $request){
+
+        $validator = Validator::make($request->all(),[
+            'id' => 'required|numeric',
+            'logo_image' => ['nullable',File::image()->max(5 * 1024)]
+        ]);
+
+        if($validator->fails())
+            return response()->json($validator->errors()->first(), 400);
+
         if($request->hasFile('image')){
 
-            $produtoImageName = $id . '.png';
+            $product = DB::table('products')
+            ->where('id', $request->id)
+            ->where('company_id', session()->get('id'));
+
+            if($product->first() == null){
+                return response()->json('Produto não encontrado', 404);
+            }
+            
+            $produtoImageName = $request->id . '.png';
 
             $request->file('image')->storeAs('public/products/', $produtoImageName);
 
             $product->update([
                 'image' => $produtoImageName
             ]);
+
+            return response()->json('',201);
         }
-        return response()->json(['message' => 'Product successfully updated','data' => $id], 200);
+        
+        return response()->json('',200);
+
     }
 
 }

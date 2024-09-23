@@ -38,5 +38,6 @@ Route::middleware('verifyTokenJWT')->group(function () {
         'category' => CategoryController::class,
         'product' => ProductController::class
     ]);
+    Route::post('/product/product_image', [ProductController::class,'storeImage']);
 
 });
