@@ -117,7 +117,7 @@ class CompanyController extends Controller
                 'name' => $company->name,
                 'cpf_cnpj' => $company->cpf_cnpj,
                 'email' => $company->email,
-                'exp' => time() + env('JWT_EXP')
+                'exp' => time() * env('JWT_EXP')
             ];
     
             $jwt = JWT::encode($payload, $key, 'HS256');
