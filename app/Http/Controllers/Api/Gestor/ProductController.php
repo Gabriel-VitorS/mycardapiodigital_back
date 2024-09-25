@@ -41,7 +41,7 @@ class ProductController extends Controller
                 ->first();
         
         if($category == null){
-            return response()->json(['message' => 'Category not find'], 404);
+            return response()->json('Categoria não encontrada', 404);
         }
 
         $product = new Product();
@@ -105,7 +105,7 @@ class ProductController extends Controller
             ->first();
         
         if($product == null)
-            return response()->json(['message' => 'Product not find'], 404);
+            return response()->json("Produto não encontrado", 404);
 
         $product->url_image = $this->getUrlProductImage($product->image);
 
@@ -124,9 +124,9 @@ class ProductController extends Controller
         }
         
         if($product == null)
-            return response()->json(['message' => 'Product not find'], 404);
+            return response()->json("Produto não encontrado", 404);
 
-        return response()->json(['message' => 'Product deleted successfully', 'data' => $id], 200);
+        return response()->json("", 204);
     }
 
     public function update($id, Request $request):JsonResponse{
@@ -142,7 +142,7 @@ class ProductController extends Controller
                 ->first();
         
         if($category == null){
-            return response()->json(['message' => 'Category not find'], 404);
+            return response()->json("Categoria não encontrada", 404);
         }
 
         $product = DB::table('products')
@@ -150,7 +150,7 @@ class ProductController extends Controller
             ->where('company_id', session()->get('id'));
 
         if($product->first() == null){
-            return response()->json(['messsage' => 'Product not find'], 404);
+            return response()->json("Produto não encontrado", 404);
         }
 
         $product->update([
