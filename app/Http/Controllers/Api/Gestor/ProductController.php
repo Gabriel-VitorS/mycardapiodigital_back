@@ -20,7 +20,7 @@ class ProductController extends Controller
         $this->rules = [
                 'category_id' => 'required|numeric',
                 'name' => 'required',
-                'value' => 'required|decimal:2',
+                'value' => 'required|decimal:0,2',
                 'resume' => 'nullable',
                 'details' => 'nullable',
                 'highlight' => 'required|boolean',
