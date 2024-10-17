@@ -76,7 +76,7 @@ class ConfigurationController extends Controller
         $validator = Validator::make($request->all(),[
             'name_company' => 'required',
             'url' => 'required|regex:/^[A-Za-z0-9-]+$/',
-            'background_color' => ['required', Rule::in(['#ffffff', '#18181b'])],
+            'background_color' => ['required', Rule::in(['#F8F9FA', '#18181b'])],
             'theme_color' => 'hex_color',
         ]);
 
@@ -132,7 +132,7 @@ class ConfigurationController extends Controller
         $validator = Validator::make($request->all(),[
             'name_company' => 'required',
             'url' => 'required|regex:/^[A-Za-z0-9-]+$/',
-            'background_color' => ['required', Rule::in(['#ffffff', '#18181b'])],
+            'background_color' => ['required', Rule::in(['#F8F9FA', '#252525'])],
             'theme_color' => 'hex_color',
         ]);
 
