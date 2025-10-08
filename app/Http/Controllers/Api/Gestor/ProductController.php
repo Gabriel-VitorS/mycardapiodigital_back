@@ -18,7 +18,7 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->rules = [
-                'category_id' => 'required|numeric',
+                'category_id' => 'numeric|nullable',
                 'name' => 'required',
                 'value' => 'required|decimal:0,2',
                 'resume' => 'nullable',
@@ -35,13 +35,18 @@ class ProductController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 400);    
         }
-        $category = DB::table('categories')
-                ->where('id', $request->category_id)
-                ->where('company_id', session()->get('id'))
-                ->first();
+
+        if($request->category_id != null){
         
-        if($category == null){
-            return response()->json('Categoria não encontrada', 404);
+            $category = DB::table('categories')
+                    ->where('id', $request->category_id)
+                    ->where('company_id', session()->get('id'))
+                    ->first();
+            
+            if($category == null){
+                return response()->json('Categoria não encontrada', 404);
+            }
+
         }
 
         $product = new Product();
@@ -67,34 +72,33 @@ class ProductController extends Controller
         $queryHighlight = $request->highlight;
         $queryVisibleOnline = $request->visible_online;
 
-        $products = DB::table('products')
-                ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->select('products.*', 'categories.id as category_id', 'categories.name as category_name')
-                ->where('products.company_id', session()->get('id'))
+        $products = Product::with('category')
+                ->where('company_id', session()->get('id'))
 
                 ->when($queryId, function ($query, $queryId){
-                    $query->where('products.id', $queryId);
+                    $query->where('id', $queryId);
                 })
 
                 ->when($queryName, function ($query, $queryName){
-                    $query->where('products.name', 'LIKE', '%' . $queryName . '%');
+                    $query->where('name', 'LIKE', '%' . $queryName . '%');
                 })
 
                 ->when($queryHighlight, function ($query, $queryHighlight){
-                    $query->where('products.highlight', $queryHighlight == 'true' ? 1 : 0);
+                    $query->where('highlight', $queryHighlight == 'true' ? 1 : 0);
                 })
 
                 ->when($queryVisibleOnline, function ($query, $queryVisibleOnline){
-                    $query->where('products.visible_online', $queryVisibleOnline == 'true' ? 1 : 0);
+                    $query->where('visible_online', $queryVisibleOnline == 'true' ? 1 : 0);
                 })
 
                 ->when($queryCategory, function ($query, $queryCategory){
-                    $query->where('categories.name', 'LIKE', '%' . $queryCategory . '%');
+                    $query->whereHas('category', function($q) use ($queryCategory){
+                        $q->where('name', 'LIKE', '%' . $queryCategory . '%');
+                    });
                 })
 
                 ->latest()
                 ->paginate(15);
-
         return response()->json($products, 200);
     }
 
